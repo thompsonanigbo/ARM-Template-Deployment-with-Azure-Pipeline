@@ -1,0 +1,25 @@
+# name: $(BuildDefinitionName)_$(date:yyyyMMdd)$(rev:.r)
+
+trigger: none
+
+pr: none
+
+stages :        
+  - stage: arm_template_deploy
+    jobs:
+      - job: arm_template_deploy
+        steps:
+              - checkout: self
+
+              - task: AzureResourceManagerTemplateDeployment@3
+                inputs:
+                  deploymentScope: 'Resource Group'
+                  azureResourceManagerConnection: 'tomtomconnection'
+                  subscriptionId: 'be651213-5d10-4696-bb03-4253e79d09b3'
+                  action: 'Create Or Update Resource Group'
+                  resourceGroupName: 'TomAppRG'
+                  location: 'ukwest'
+                  templateLocation: 'Linked artifact'
+                  csmFile: '$(System.DefaultWorkingDirectory)/tomapp.json'
+                  csmParametersFile: '$(System.DefaultWorkingDirectory)/tommapp.parameters.json'
+                  deploymentMode: 'Incremental'
